@@ -1,9 +1,9 @@
 /**
  * Created by zb on 2016/9/13.
  */
-var mongoose=require('mongoose');
+var mongoose = require('mongoose');
 //model编译，生成构造函数
-var MovieSchema=require("../schemas/movie");
-var Movie=mongoose.model("Movie",MovieSchema);
+var MovieSchema = require('../schemas/movie');
+var Movie = mongoose.model('Movie', MovieSchema);
 
-modules.exports=Movie
+module.exports = Movie;
