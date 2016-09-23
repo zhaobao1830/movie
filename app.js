@@ -3,12 +3,14 @@ var path = require('path');
 var port = process.env.PORT||3000;
 var mongoose=require('mongoose');
 var _=require('underscore');
+var favicon = require('serve-favicon');
 var Movie=require('./module/movie')
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var app = express();
 
+//连接数据库
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/imooc')
 
@@ -16,21 +18,21 @@ mongoose.connect('mongodb://localhost/imooc')
 // view engine setup
 app.set('views',  __dirname + '/views/pages')
 app.set('view engine', 'jade');
-app.set('port',3000);
 
 
 /*添加这个，才可以再cmd启动node app. js，或者在webstrom里面用工具启动app.js*/
 /*不添加。只能在cmd里面用 npm start启动*/
-app.listen(3000,function(){
-  console.log('server start ...');
+app.listen(port,function(){
+  console.log('server start ...'+port);
 });
 // uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 //静态资源请求路径
-//所以可以吧js放到bower_components下面，请求的时候，直接  script(src="/js/admin.js")即可
+//所以可以吧js放到bower_components下面，请求的时候，直接script(src="/js/admin.js")
 app.use(express.static(path.join(__dirname, 'bower_components')));
 
 var emptyMovie = {

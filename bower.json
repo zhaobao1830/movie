@@ -1,0 +1,24 @@
+{
+  "name": "movie",
+  "description": "ds",
+  "main": "",
+  "authors": [
+    "赵宝 <zhaobao@lubanec.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "movie"
+  ],
+  "homepage": "https://github.com/zhaobao1830/movie",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
