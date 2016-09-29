@@ -5,6 +5,7 @@ var mongoose=require('mongoose');
 var _=require('underscore');
 var favicon = require('serve-favicon');
 var Movie=require('./module/movie')
+var User=require('./module/user')
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -59,6 +60,45 @@ app.get('/', function(req, res) {
   })
 
 })
+
+//signup
+app.post('/user/signup',function(req,res){
+  var _user=req.body.user
+
+  //判断是否已经有了
+  User.find({name:_user.name},function(err,user){
+    if(err){
+      console.log("err"+err)
+    }
+    if(user){
+      return res.redirect('/')
+    }else{
+      var user=new User(_user)
+      user.save(function(err,user){
+        if(err){
+          console.log(err);
+        }else{
+          res.redirect('/admin/userList')
+        }
+      })
+    }
+  })
+})
+
+
+//userList page
+app.get('/admin/userList', function(req, res) {
+  User.fetch(function(err,users){
+    if(err){
+      console.log(err)
+    }
+    res.render('userList', {
+      title: '用户 列表页',
+      user:users
+    })
+  })
+})
+
 
 //detail page
 app.get('/detail/:id', function(req, res) {
