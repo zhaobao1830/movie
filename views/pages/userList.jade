@@ -11,7 +11,7 @@ block content
                     th 更新
                     th 删除
             tbody
-                each item in user
+                each item in users
                     tr(class="item-id-#{item._id}")
                         td #{item.name}
                         //td #{moment(item.meta.updateAt).format('MM/DD/YYYY')}

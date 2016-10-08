@@ -2,18 +2,23 @@ var express = require('express');
 var path = require('path');
 var port = process.env.PORT||3000;
 var mongoose=require('mongoose');
+//express4使用connect-mongo时，用下面这钟方法
+var session = require('express-session');
+var mongoStore=require('connect-mongo')(session);
 var _=require('underscore');
 var favicon = require('serve-favicon');
 var Movie=require('./module/movie')
 var User=require('./module/user')
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var bodyParser = require('body-parser');
 var app = express();
 
 //连接数据库
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/imooc')
+var dbUrl='mongodb://localhost/imooc'
+mongoose.connect(dbUrl)
 
 
 // view engine setup
@@ -32,9 +37,18 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(session({
+  secret:'movie',
+  store:new mongoStore({
+    url:dbUrl,
+    collection:'sessions'
+  })
+}))
 //静态资源请求路径
 //所以可以吧js放到bower_components下面，请求的时候，直接script(src="/js/admin.js")
 app.use(express.static(path.join(__dirname, 'bower_components')));
+
+
 
 var emptyMovie = {
   title: "",
@@ -45,6 +59,16 @@ var emptyMovie = {
   poster: "",
   summary: ""
 };
+
+//pre handle user 预处理user
+app.use(function(req,res,next){
+  var _user=req.session.user
+  if(_user){
+    app.locals.user=_user
+  }
+  return next()
+
+})
 
 
 //index page
@@ -64,9 +88,9 @@ app.get('/', function(req, res) {
 //signup
 app.post('/user/signup',function(req,res){
   var _user=req.body.user
-
+  console.log("进入signup")
   //判断是否已经有了
-  User.find({name:_user.name},function(err,user){
+  User.findOne({name:_user.name},function(err,user){
     if(err){
       console.log("err"+err)
     }
@@ -85,16 +109,53 @@ app.post('/user/signup',function(req,res){
   })
 })
 
+//signin
+app.post("/user/signin",function(req,res){
+  var _user=req.body.user
+  var name=_user.name
+  var password=_user.password
+
+  User.findOne({name:name},function(err,user){
+    if(err){
+      console.log(err)
+    }
+    if(!user){
+      return res.redirect('/')
+    }
+    user.comparePassword(password,function(err,isMatch){
+      if(err){
+        console.log(err)
+      }
+      if(isMatch){
+        req.session.user=user
+        return res.redirect("/")
+      }else{
+        console.log("Password is not matched")
+      }
+    })
+
+  })
+})
+
+//logout
+app.get('/logout',function(req,res){
+  delete req.session.user
+
+  //这个不需要，因为app是把session赋值给locals的，session删除user,locals里的user自然为空
+  delete app.locals.user
+  res.redirect('/')
+})
 
 //userList page
 app.get('/admin/userList', function(req, res) {
+  console.log("ss:"+req.session.user)
   User.fetch(function(err,users){
     if(err){
       console.log(err)
     }
     res.render('userList', {
       title: '用户 列表页',
-      user:users
+      users:users
     })
   })
 })

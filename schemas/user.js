@@ -52,6 +52,17 @@ UserSchema.pre('save', function (next) {
     })
 });
 
+UserSchema.methods={
+    comparePassword:function(_password,cb){
+        bcrypt.compare(_password,this.password,function(err,isMatch){
+            if(err){
+                return cb(err)
+            }else{
+                cb(null,isMatch)
+            }
+        })
+    }
+}
 
 //添加静态方法
 UserSchema.statics={
