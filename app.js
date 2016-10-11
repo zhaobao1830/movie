@@ -11,10 +11,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser = require('body-parser');
+var fs=require('fs')
+
+require('./app/models/Category');
+require('./app/models/Comment');
+require('./app/models/User');
+require('./app/models/Movie');
 
 var routes=require('./config/routes')
 
 var app = express();
+
 
 
 //连接数据库
@@ -22,6 +29,26 @@ mongoose.Promise = global.Promise;
 var dbUrl='mongodb://localhost/imooc'
 mongoose.connect(dbUrl)
 
+// models loading
+var models_path = __dirname + '/app/models'
+var walk = function(path) {
+  fs
+      .readdirSync(path)
+      .forEach(function(file) {
+        var newPath = path + '/' + file
+        var stat = fs.statSync(newPath)
+
+        if (stat.isFile()) {
+          if (/(.*)\.(js|coffee)/.test(file)) {
+            require(newPath)
+          }
+        }
+        else if (stat.isDirectory()) {
+          walk(newPath)
+        }
+      })
+}
+walk(models_path)
 
 // view engine setup
 app.set('views',  __dirname + '/app/views/pages')
@@ -38,6 +65,7 @@ app.listen(port,function(){
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser({uploadDir:'./uploads'}));
 app.use(cookieParser());
 app.use(session({
   secret:'movie',
@@ -49,9 +77,12 @@ app.use(session({
 //静态资源请求路径
 //所以可以吧js放到bower_components下面，请求的时候，直接script(src="/js/admin.js")
 app.use(express.static(path.join(__dirname, 'bower_components')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 //调用routes
 routes(app)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

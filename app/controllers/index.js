@@ -3,7 +3,7 @@
  */
 //和首页进行交互
 //index page
-var Movie=require('../module/movie')
+var Movie=require('../models/movie')
 exports.index=function(req, res) {
     console.log("fdsf")
     Movie.fetch(function(err,movies){

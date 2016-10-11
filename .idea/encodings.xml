@@ -2,11 +2,13 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/controllers/category.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/models/category.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/schemas/category.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/views/pages/category_admin.jade" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/views/pages/categorylist.jade" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/views/pages/error.jade" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/bower_components/bootstrap/app.js" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/views/layout.jade" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/views/pages/admin.jade" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/views/pages/error.jade" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/public/build" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

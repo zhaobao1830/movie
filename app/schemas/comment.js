@@ -1,17 +1,17 @@
-/**
- * Created by zb on 2016/9/13.
- */
 //mongoose用来操作mongodb数据库的
-var mongoose=require("mongoose");
+var mongoose = require('mongoose')
+var Schema = mongoose.Schema
+var ObjectId = Schema.Types.ObjectId
 //模式定义，定义字段的类型
-var MovieSchema = new mongoose.Schema({
-    doctor: String,
-    title: String,
-    language: String,
-    country: String,
-    year: String,
-    summary: String,
-    poster: String,
+var CommentSchema = new mongoose.Schema({
+    movie:{type:ObjectId,ref:'Movie'},
+    from:{type:ObjectId,ref:'User'},
+    reply: [{
+        from: {type: ObjectId, ref: 'User'},
+        to: {type: ObjectId, ref: 'User'},
+        content: String
+    }],
+    content: String,
     meta: {
         createAt: {
             type: Date,
@@ -24,7 +24,7 @@ var MovieSchema = new mongoose.Schema({
     }
 });
 
-MovieSchema.pre('save', function (next) {
+CommentSchema.pre('save', function (next) {
     if (this.isNew) {
         this.meta.createAt = this.meta.updateAt = Date.now();
     } else {
@@ -35,7 +35,7 @@ MovieSchema.pre('save', function (next) {
 
 
 //添加静态方法
-MovieSchema.statics={
+CommentSchema.statics={
     fetch:function(cb){
         return this
             .find({})  //批量查询
@@ -50,4 +50,4 @@ MovieSchema.statics={
 }
 
 
-module.exports=MovieSchema
+module.exports=CommentSchema

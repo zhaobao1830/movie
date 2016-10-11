@@ -1,52 +1,49 @@
-/**
- * Created by zb on 2016/10/8.
- */
 var Index = require('../app/controllers/index')
 var User = require('../app/controllers/user')
 var Movie = require('../app/controllers/movie')
-
-//var express = require('express');
-//var app = express();
+var Comment = require('../app/controllers/comment')
+var Category = require('../app/controllers/category')
+//var multiparty = require('connect-multiparty')
+//var multipartMiddleware = multiparty();
 
 module.exports = function(app) {
-//pre handle user 预处理user
-app.use(function(req,res,next){
-    var _user=req.session.user
-        app.locals.user=_user
-    next()
-})
 
-    //index page
-    app.get("/",Index.index)
+    // pre handle user
+    app.use(function(req, res, next) {
+        var _user = req.session.user
 
-    //user
-    //signup
-    app.post('/user/signup',User.signup)
-    //signin
-    app.post('/user/signin',User.signin)
-    //signin
-    app.get('/signin',User.showSignin)
-    //signin
-    app.get('/signup',User.showSignup)
-    //logout
+        app.locals.user = _user
+
+        next()
+    })
+
+    // Index
+    app.get('/', Index.index)
+
+    // User
+    app.post('/user/signup', User.signup)
+    app.post('/user/signin', User.signin)
+    app.get('/signin', User.showSignin)
+    app.get('/signup', User.showSignup)
     app.get('/logout', User.logout)
-    //list
-    app.get('/admin/user/list',User.signinRequired,User.adminRequired,User.userList)
+    app.get('/admin/user/list', User.signinRequired, User.adminRequired, User.list)
 
-    //movie
-    //detail
+    // Movie
     app.get('/movie/:id', Movie.detail)
-    //new
-    app.get('/admin/movie/new',User.signinRequired, User.adminRequired, Movie.new)
-    //update
-    app.get('/admin/movie/update/:id',User.signinRequired, User.adminRequired,Movie.update)
-    //save
-    app.post('/admin/movie',User.signinRequired, User.adminRequired,Movie.save)
-    //list
-    app.get('/admin/movie/list', User.signinRequired, User.adminRequired,Movie.list)
-    //del
-    app.delete('/admin/movie/del',User.signinRequired, User.adminRequired, Movie.del)
-};
+    app.get('/admin/movie/new', User.signinRequired, User.adminRequired, Movie.new)
+    app.get('/admin/movie/update/:id', User.signinRequired, User.adminRequired, Movie.update)
+    app.post('/admin/movie', User.signinRequired, User.adminRequired, Movie.savePoster, Movie.save)
+    app.get('/admin/movie/list', User.signinRequired, User.adminRequired, Movie.list)
+    app.delete('/admin/movie/list', User.signinRequired, User.adminRequired, Movie.del)
 
+    // Comment
+    app.post('/user/comment', User.signinRequired, Comment.save)
 
+    // Category
+    app.get('/admin/category/new', User.signinRequired, User.adminRequired, Category.new)
+    app.post('/admin/category', User.signinRequired, User.adminRequired, Category.save)
+    app.get('/admin/category/list', User.signinRequired, User.adminRequired, Category.list)
 
+    //// results
+    //app.get('/results', Index.search)
+}
